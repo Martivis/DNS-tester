@@ -19,7 +19,7 @@ int main()
 	if (list->next != NULL)
 		print_list(list);
 	
-	//getchar();
+	getchar();
 #endif // DEBUG
 
 	clear_list(&list);

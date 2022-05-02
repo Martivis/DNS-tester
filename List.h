@@ -39,6 +39,14 @@ void clear_list(struct Node** list)
 	*list = NULL;
 }
 
+void inc(struct Node** ptr, struct Node* list)
+{
+	if ((*ptr)->next == NULL)
+		*ptr = list->next;
+	else
+		*ptr = (*ptr)->next;
+}
+
 #ifdef DEBUG
 void print_list(const struct Node* list)
 {
