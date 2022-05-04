@@ -32,7 +32,7 @@ struct DNSHeader
 struct DNSQuestion
 {
 	/* ===== QUESTION ===== */
-	char qName[256];
+	char* qName;
 	uint16_t qType;
 	uint16_t qClass;
 };
@@ -43,23 +43,68 @@ struct DNSQuery
 	struct DNSQuestion question;
 };
 
+size_t name_to_buff(char* buff, char* name)
+{	// Converts domain from www.example.com to 3www7example3com cstring (numbers is codes of symbols or just byte content)
+	// qName convert
+	size_t i = 0; // i flows through 'name', buff is shifted (1 add byte in [0])
+	while (name[i] != '\0')
+	{
+		uint8_t sectionSize = 0;
+		size_t border = i;
+		while (name[i] != '.' && name[i] != '\0')
+		{
+			buff[i] = name[i++];
+			sectionSize++;
+		}
+		buff[border] = (char)sectionSize;
+		i++;
+	}
+	buff[++i] = '\0';
+	return i;
+}
+
+size_t buff_to_name(char** name, char* buff)
+{	// Converts buffered domain form 3www7example3com to www.example.com cstring
+	char tmpStr[256];
+	memset(tmpStr, '\0', 256);
+	size_t i = 0;
+	while (buff[i + 1] != '\0')
+	{
+		size_t toRead = buff[i];
+		if (i > 0)
+			tmpStr[i - 1] = '.';
+		for (size_t j = 0; j < toRead; j++, i++)
+		{
+			tmpStr[i] = buff[i + 1];
+		}
+		i++;
+	}
+	*name = (char*)malloc(i);
+	strcpy(*name, tmpStr);
+	return i;
+}
+
 char* form_DNS_query(struct DNSQuery* query)
-{ // Запись DNS запроса в буфер
+{ // Write DNS query to buffer
 	size_t headerSize = sizeof(query->header);
 	size_t questionSize = sizeof(query->question);
-	char* result = (char*)malloc(headerSize + questionSize);
+	char* result = (char*)malloc(headerSize + questionSize + 1);
 
-	memcpy(result, &(query->header), headerSize);					// Запись шапки запроса в буфер
-	memcpy(result + headerSize, &(query->question), questionSize);	// Запись секции запроса в буфер
+	memcpy(result, &(query->header), headerSize);												// Write the header to buffer
+	size_t nameSize = name_to_buff(result + headerSize, query->question.qName);					// Write domain name to buffer
+	memcpy(result + headerSize + nameSize, &(query->question.qType), questionSize - nameSize);	// Write the rest of the question section to buffer
 
 	return result;
 }
 
-void read_DNS_query(char* source, struct DNSQuery* query)
-{ // Чтение DNS запроса из буфера
-	size_t headerSize = sizeof(query->header);
-	memcpy(&(query->header), source, headerSize);								// Чтение шапки из буфера
-	memcpy(&(query->question), source + headerSize, sizeof(query->question));	// Чтений секции запроса из буфера
+struct DNSQuery* read_DNS_query(char* source)
+{ // Read DNS query from buffer
+	struct DNSQuery* result = (struct DNSQuery*)malloc(sizeof(struct DNSQuery*));
+	size_t headerSize = sizeof(result->header);
+	memcpy(&(result->header), source, headerSize);								// Read the header from buffer
+	size_t nameSize = buff_to_name(&result->question.qName, source + headerSize);
+	memcpy(&(result->question.qType), source + headerSize + nameSize + 1, sizeof(result->question) - nameSize - 1);	// Read the question section from buffer
+	return result;
 }
 
 #ifdef DEBUG

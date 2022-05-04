@@ -1,7 +1,7 @@
 #pragma once
 #include "Query.h"
 
-typedef struct Query data_t;
+typedef struct DNSQuery data_t;
 
 struct Node
 {
@@ -32,6 +32,7 @@ void clear_list(struct Node** list)
 	{
 		struct Node* toDel = ptr;
 		ptr = ptr->next;
+		free(toDel->data->question.qName);
 		free(toDel->data);
 		free(toDel);
 	}
