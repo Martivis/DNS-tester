@@ -5,3 +5,13 @@ A yahoo.com
 A amazon.com
 A baidu.com
 A wikipedia.org
+A pinterest.com
+A twitter.com
+A instagram.com
+A reddit.com
+A linkedin.com
+A quora.com
+A ebay.com
+A fandom.com
+A wordpress.com
+A walmart.com
