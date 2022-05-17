@@ -35,6 +35,7 @@ $(TARGET_DNS_PERF): DNSPerf.o $(TARGET_DNS_MODULE)
 clean:
 	rm -rf *.o
 	rm -rf *.gch
+	rm ./$(TARGET_DNS_PERF) ./$(TARGET_DNS_STUB) $(TARGET_DNS_MODULE)
 
 install:
 	mkdir bin
