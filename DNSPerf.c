@@ -15,9 +15,7 @@ int main()
 		}
         else
 		{
-			printf("Iterator...");
 		    struct Iterator* it = iterator_create(create_DNS_list("dns.txt"));
-			printf(" Created\n");
 
 			struct msghdr msgh;		// sendmsg header
 			struct iovec io[1];		// buffer struct
@@ -30,7 +28,7 @@ int main()
 			clock_t timer = 0;
 			uint64_t recvd_count = 0;
 
-            char recvBuff[sizeof(struct DNSQuery)] = {0}; // Buffer for replies
+            char recvBuff[sizeof(struct DNSHeader)] = {0}; // Buffer for replies
 
 			msgh.msg_name = &tgAddr;			// Put target address to sendmsg header
 			msgh.msg_namelen = sizeof(tgAddr);
@@ -48,26 +46,27 @@ int main()
 
                     size_t msgSize = it->ptr->dataSize;
 					msgh.msg_iov->iov_base = it->ptr->data;
-					msgh.msg_iov->iov_len = msgSize;
-		struct DNSQuery q;
-		debuff_DNS_header(&q.header, it->ptr->data);
-		debuff_DNS_question(&q.question, it->ptr->data + sizeof(struct DNSHeader));
-		printf("Sent %lu bytes:\n", msgSize);
-		print_query(&q);
+					msgh.msg_iov->iov_len = it->ptr->dataSize;
+		
+		//struct DNSQuery q;
+		//debuff_DNS_header(&q.header, it->ptr->data);
+		//debuff_DNS_question(&q.question, it->ptr->data + sizeof(struct DNSHeader));
+		//printf("Sent %lu bytes:\n", msgSize);
+		//print_query(&q);
+
 					iterator_advance(it);
 
 					sendmsg(mainSocket, &msgh, 0);
-					//sendto(mainSocket, it->ptr->data, msgSize, 0, (struct sockaddr *) & tgAddr, sizeof(tgAddr));
 					
 
 					int recvMsgSize = recvfrom(mainSocket, recvBuff, sizeof(struct DNSQuery), 0, NULL, NULL);
                     if (recvMsgSize >= 0)
 					{
-						struct DNSHeader recieverHeader;
+						//struct DNSHeader recieverHeader;
 						recvd_count++;
-						printf("\n\n\nRecieved:\n");
-						debuff_DNS_header(&recieverHeader, recvBuff);
-						print_header(&recieverHeader);
+						//printf("\n\n\nRecieved:\n");
+						//debuff_DNS_header(&recieverHeader, recvBuff);
+						//print_header(&recieverHeader);
 					}
                 }
 			}
