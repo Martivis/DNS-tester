@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <netinet/in.h>
 
-#include "DNSConstants.c"
+#include "DNSConstants.h"
 #include "List.h"
 
 struct DNSHeader
@@ -54,8 +54,9 @@ size_t decode_name(char* name, char* buff);
 
 void buff_DNS_header(struct DNSHeader* header, char* buff);
 // Write DNS header to bytes buffer
-void buff_DNS_question(struct DNSQuestion* question, char* buff);
-// Write DNS question to bytes buffer
+
+size_t buff_DNS_question(struct DNSQuestion* question, char* buff);
+// Write DNS question to bytes buffer. Returns number of written bytes
 
 void debuff_DNS_header(struct DNSHeader* header, char* buff);
 // Read DNS header from bytes buffer

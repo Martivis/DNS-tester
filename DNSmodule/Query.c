@@ -42,10 +42,11 @@ void buff_DNS_header(struct DNSHeader* header, char* buff)
 	memcpy(buff, header, sizeof(struct DNSHeader));
 }
 
-void buff_DNS_question(struct DNSQuestion* question, char* buff)
+size_t buff_DNS_question(struct DNSQuestion* question, char* buff)
 {
 	size_t nameSize = encode_name(buff, question->qName);
 	memcpy(buff + nameSize, &question->qType, 4);
+	return nameSize + 4;
 }
 
 void debuff_DNS_header(struct DNSHeader* header, char* buff)
@@ -63,11 +64,10 @@ struct Node* create_DNS_list(const char* fileName)
 { // Creates DNS queries list in RAM using adresses from the file
 	static uint16_t id = 0;
 
-	struct Node* result = init(); // Create list
-	struct Node* ptr = result;	  // Working pointer (list tail)
+	struct Node* result = NULL; // Create list
 
 	FILE* file = fopen(fileName, "r");
-	if (file != NULL)
+	if (file)
 	{
 		while (!feof(file))
 		{
@@ -92,15 +92,14 @@ struct Node* create_DNS_list(const char* fileName)
 			q.question.qType = read_type(file);
 			q.question.qClass = htons(IN);
 
+			memset(q.question.qName, 0, sizeof(q.question.qName));
 			fscanf(file, "%s", q.question.qName);
 			// ------
 			//print_query(q);
-			char* buff = (char*)malloc(sizeof(struct DNSHeader) + strlen(q.question.qName) + 6);
+			char* buff = (char*)malloc(sizeof(struct DNSQuestion));
 			buff_DNS_header(&q.header, buff);
-			buff_DNS_question(&q.question, buff + sizeof(struct DNSHeader));
-			add_after(buff, ptr); // Add formed and buffered query to list tail
-
-			ptr = ptr->next;
+			size_t questionSize = buff_DNS_question(&q.question, buff + sizeof(struct DNSHeader));
+			result = add_to_head(buff, sizeof(struct DNSHeader) + questionSize, result); // Add formed and buffered query to list head
 		}
 		fclose(file);
 	}

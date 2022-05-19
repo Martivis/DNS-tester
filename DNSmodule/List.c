@@ -1,24 +1,26 @@
 #include "List.h"
 
-struct Node* init()
+struct Node* add_to_head(char* data, size_t dataSize, struct Node* next)
 {
-	struct Node* result = (struct Node*)malloc(sizeof(struct Node));
-	result->data = NULL;
-	result->next = NULL;
-	return result;
+	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+	newNode->data = data;
+	newNode->next = next;
+	newNode->dataSize = dataSize;
+	return newNode;
 }
 
-void add_after(char* data, struct Node* prev)
+void add_after(char* data, size_t dataSize, struct Node* prev)
 {
 	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 	newNode->next = prev->next;
 	newNode->data = data;
+	newNode->dataSize = dataSize;
 	prev->next = newNode;
 }
 
-void clear_list(struct Node** list)
+void clear_list(struct Node* list)
 {
-	struct Node* ptr = (*list)->next;
+	struct Node* ptr = list;
 	while (ptr != NULL)
 	{
 		struct Node* toDel = ptr;
@@ -26,20 +28,18 @@ void clear_list(struct Node** list)
 		free(toDel->data);
 		free(toDel);
 	}
-	free(*list);
-	*list = NULL;
 }
 
 struct Node* list_begin(struct Node* list)
 {
-	return list->next;
+	return list;
 }
 
 struct Iterator* iterator_create(struct Node* list)
 {
 	struct Iterator* result = (struct Iterator*)malloc(sizeof(struct Iterator));
 	result->begin = list;
-	result->ptr = list->next;
+	result->ptr = list;
 	return result;
 }
 
@@ -50,7 +50,7 @@ struct Node* iterator_value(struct Iterator* it)
 
 void iterator_rewind(struct Iterator* it)
 {
-	it->ptr = it->begin->next;
+	it->ptr = it->begin;
 }
 
 void iterator_advance(struct Iterator* it)
@@ -58,5 +58,5 @@ void iterator_advance(struct Iterator* it)
 	if (it->ptr->next)
 		it->ptr = it->ptr->next;
 	else
-		it->ptr = it->begin->next;
+		it->ptr = it->begin;
 }

@@ -2,10 +2,11 @@
 #define LIST_H
 
 #include <stdlib.h>
-
+#include <stdio.h>
 struct Node
 {
 	char* data;
+	size_t dataSize;
 	struct Node* next;
 };
 
@@ -15,11 +16,11 @@ struct Iterator
 	struct Node* ptr;
 };
 
-struct Node* init();
+struct Node* add_to_head(char* data, size_t dataSize, struct Node* next);
 
-void add_after(char* data, struct Node* prev);
+void add_after(char* data, size_t dataSize, struct Node* prev);
 
-void clear_list(struct Node** list);
+void clear_list(struct Node* list);
 
 struct Node* list_begin(struct Node* list);
 

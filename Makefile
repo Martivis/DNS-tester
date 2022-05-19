@@ -8,17 +8,14 @@ DNS = ./DNSmodule
 
 all: $(TARGET_DNS_MODULE) $(TARGET_DNS_STUB) $(TARGET_DNS_PERF)
 
-DNSConstants.o: $(DNS)/DNSConstants.c
-	gcc -c $(DNS)/DNSConstants.c
-
 List.o: $(DNS)/List.c $(DNS)/List.h
 	gcc -c $(DNS)/List.c $(DNS)/List.h
 
-Query.o: $(DNS)/Query.c $(DNS)/Query.h
-	gcc -c $(DNS)/Query.c $(DNS)/Query.h
+Query.o: $(DNS)/Query.c $(DNS)/Query.h $(DNS)/DNSConstants.h
+	gcc -c $(DNS)/Query.c $(DNS)/Query.h $(DNS)/DNSConstants.h
 
-$(TARGET_DNS_MODULE): Query.o List.o DNSConstants.o
-	ar rc libdns.a Query.o List.o DNSConstants.o
+$(TARGET_DNS_MODULE): Query.o List.o
+	ar rc libdns.a Query.o List.o
 
 DNSStubServer.o: DNSStubServer.c
 	gcc -c DNSStubServer.c
