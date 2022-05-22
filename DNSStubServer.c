@@ -25,7 +25,7 @@ int main()
 		char buff[512] = { 0 };
 		struct sockaddr clientAddr;
 		socklen_t clientAddrLen = sizeof(clientAddr);
-
+		uint64_t total = 0;
 		while (1)
 		{
 			memset(buff, 0, sizeof(buff));
@@ -35,7 +35,6 @@ int main()
 				struct DNSHeader header;
 
 				debuff_DNS_header(&header, buff);
-				printf("Recieved %lu bytes\n", msgSize);
 				//print_header(&header);
 				header.qr = REPLY;
 				//printf("Setting flags...\n");
@@ -44,6 +43,8 @@ int main()
 
 				buff_DNS_header(&header, buff);
 				int bytesSent = sendto(mainSocket, buff, sizeof(struct DNSHeader), 0, &clientAddr, clientAddrLen);
+				//if (bytesSent > 0)
+					//printf("Recieved %lu\n", total++);
 			}
 		}
 	}
