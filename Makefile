@@ -27,7 +27,7 @@ $(TARGET_DNS_STUB): DNSStubServer.o $(TARGET_DNS_MODULE)
 	gcc DNSStubServer.c -L. -ldns -o $(TARGET_DNS_STUB)
 
 $(TARGET_DNS_PERF): DNSPerf.o $(TARGET_DNS_MODULE)
-	gcc DNSPerf.c -L. -ldns -o $(TARGET_DNS_PERF)
+	gcc DNSPerf.c -L. -ldns -o $(TARGET_DNS_PERF) -pthread
 
 clean:
 	rm -rf *.o

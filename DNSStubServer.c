@@ -35,7 +35,7 @@ int main()
 				struct DNSHeader header;
 
 				debuff_DNS_header(&header, buff);
-				printf("\n\nRecieved %lu bytes\n", msgSize);
+				printf("Recieved %lu bytes\n", msgSize);
 				//print_header(&header);
 				header.qr = REPLY;
 				//printf("Setting flags...\n");
