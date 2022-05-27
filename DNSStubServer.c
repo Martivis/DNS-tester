@@ -42,7 +42,7 @@ int main()
 					header.ra = 1;
 
 				buff_DNS_header(&header, buff);
-				int bytesSent = sendto(mainSocket, buff, sizeof(struct DNSHeader), 0, &clientAddr, clientAddrLen);
+				int bytesSent = sendto(mainSocket, buff, msgSize, 0, &clientAddr, clientAddrLen);
 				//if (bytesSent > 0)
 					//printf("Recieved %lu\n", total++);
 			}
